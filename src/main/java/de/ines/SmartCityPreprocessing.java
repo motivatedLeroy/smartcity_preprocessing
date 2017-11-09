@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
-@EntityScan(basePackages = { "de.ines.domain" })
+@EntityScan(basePackages = { "de.ines.entities" })
 @EnableJpaRepositories(basePackages = { "de.ines.repositories" })
 @EnableRabbit
 public class SmartCityPreprocessing {

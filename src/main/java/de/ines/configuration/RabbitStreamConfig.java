@@ -1,6 +1,6 @@
-package de.ines.Configuration;
+package de.ines.configuration;
 
-import de.ines.Services.GpsPointPreprocessingService;
+import de.ines.services.RoutePreprocessingService;
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -41,7 +41,7 @@ public class RabbitStreamConfig {
 
 
     @Bean
-    public SimpleMessageListenerContainer container(GpsPointPreprocessingService receiver) {
+    public SimpleMessageListenerContainer container(RoutePreprocessingService receiver) {
         SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
         container.setConnectionFactory(connectionFactory());
         container.setQueueNames("preprocessingQueue");
@@ -52,7 +52,7 @@ public class RabbitStreamConfig {
     }
 
     @Bean
-    MessageListenerAdapter upStreamListenerAdapter(GpsPointPreprocessingService receiver){
+    MessageListenerAdapter upStreamListenerAdapter(RoutePreprocessingService receiver){
         return new MessageListenerAdapter(receiver, "preprocessingQueueMessage");
     }
 }
