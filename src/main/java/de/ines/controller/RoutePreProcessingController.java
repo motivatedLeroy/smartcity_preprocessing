@@ -31,4 +31,10 @@ public class RoutePreProcessingController {
         return routePreprocessingService.smoothRoute(jsonRoute);
     }
 
+    @RequestMapping("/compressRoute")
+    public GpsPoint[] compressRoute(@RequestParam("route") String jsonRoute, @RequestParam("tolerance")double tolerance, @RequestParam("highQuality") boolean highQuality) throws IOException {
+        return routePreprocessingService.compressRoute(jsonRoute, tolerance, highQuality);
+    }
+
+
 }

@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.BitSet;
+import java.util.List;
 
 import static java.lang.Math.*;
 
@@ -94,8 +96,13 @@ public class RoutePreprocessingService {
         return (GpsPoint[])resultingRoute.toArray();
     }
 
-
-
+    public GpsPoint[] compressRoute(String jsonRoute, double tolerance, boolean highQuality) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        Route route = null;
+        route = mapper.readValue(jsonRoute, Route.class);
+        DouglasPeuckerService douglasPeuckerService = new DouglasPeuckerService();
+        return douglasPeuckerService.simplify(route.route, tolerance, highQuality);
+    }
 
 
 
