@@ -1,17 +1,28 @@
 package de.ines.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.ines.entities.GpsPoint;
+import de.ines.entities.Route;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 
+@Service
 public class DouglasPeuckerService {
 
 
     private GpsPoint[] sampleArray;
 
 
-    public GpsPoint[] simplify(GpsPoint[] points, double tolerance, boolean highestQuality) {
+    public GpsPoint[] simplify(String jsonRoute, double tolerance, boolean highestQuality) throws IOException {
+
+        ObjectMapper mapper = new ObjectMapper();
+        Route route = null;
+        route = mapper.readValue(jsonRoute, Route.class);
+        GpsPoint[] points = route.route;
 
         if (points == null || points.length <= 2) {
             return points;
