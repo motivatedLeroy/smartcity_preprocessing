@@ -16,7 +16,14 @@ public class DouglasPeuckerService {
 
     private GpsPoint[] sampleArray;
 
-
+    /**
+     * Based on the simplify algorithm of "https://github.com/hgoebl/simplify-java"
+     * @param jsonRoute the route to be entered via json
+     * @param tolerance used to compute the squared tolerance that limitates the number of points in the simplified route
+     * @param highestQuality defines that either radial distance or Douglas - Peucker is used to determine the simplified route
+     * @return the simplified route
+     * @throws IOException
+     */
     public GpsPoint[] simplify(String jsonRoute, double tolerance, boolean highestQuality) throws IOException {
 
         ObjectMapper mapper = new ObjectMapper();
@@ -71,6 +78,12 @@ public class DouglasPeuckerService {
         int last;
     }
 
+    /**
+     * The Douglas - Peucker algorithm based on "Topologically Consistent Line Simplification with the Douglas-Peucker Algorithm".
+     * @param points
+     * @param sqTolerance
+     * @return
+     */
     GpsPoint[] simplifyDouglasPeucker(GpsPoint[] points, double sqTolerance) {
 
         BitSet bitSet = new BitSet(points.length);
@@ -112,6 +125,13 @@ public class DouglasPeuckerService {
         return newPoints.toArray(sampleArray);
     }
 
+
+    /**
+     * Computes the squared distance between two GpsPoints (of a route).
+     * @param p1 the first GpsPoint
+     * @param p2 the second GpsPoint
+     * @return the squared distance between p1 and p2
+     */
     public double getSquareDistance(GpsPoint p1, GpsPoint p2){
 
         double dx = p1.getLatitude() - p2.getLatitude();
@@ -120,6 +140,14 @@ public class DouglasPeuckerService {
         return dx * dx + dy * dy;
     }
 
+    /**
+     * Computes the squared distance between a segment and a point. The segment is stretched out
+     * between two points.
+     * @param p0 the point to which the distance of a segment is calculated
+     * @param p1 the first corner of the stretched out segment
+     * @param p2 the second croner of the stretched out segment
+     * @return the squared distance between the segment defined by p1 and p2 and the single point p0
+     */
     public  double getSquareSegmentDistance(GpsPoint p0, GpsPoint p1, GpsPoint p2){
         double x0, y0, x1, y1, x2, y2, dx, dy, t;
 

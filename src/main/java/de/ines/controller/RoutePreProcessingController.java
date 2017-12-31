@@ -1,7 +1,6 @@
 package de.ines.controller;
 
 import de.ines.entities.GpsPoint;
-import de.ines.entities.Route;
 import de.ines.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,9 +11,6 @@ import java.io.IOException;
 
 @RestController
 public class RoutePreProcessingController {
-
-    @Autowired
-    public RoutePreprocessingService routePreprocessingService;
 
     @Autowired
     public DouglasPeuckerService douglasPeuckerService;
@@ -32,13 +28,13 @@ public class RoutePreProcessingController {
     public MapMatchingService mapMatchingService;
 
     @RequestMapping("/staypointDetection")
-    public GpsPoint[] staypointDetection(@RequestParam("route") String jsonRoute) throws IOException {
-        return staypointDetectionService.staypointDetection(jsonRoute);
+    public GpsPoint[] staypointDetection(@RequestParam("route") String jsonRoute, @RequestParam("distThreshold") int distThreshold, @RequestParam("timeThreshold")int timeThreshold) throws IOException {
+        return staypointDetectionService.staypointDetection(jsonRoute, distThreshold, timeThreshold);
     }
 
     @RequestMapping("/outlierDeletion")
-    public GpsPoint[] outlierDeletion(@RequestParam("route") String jsonRoute) throws IOException {
-        return outlierDeletionService.outlierDeletion(jsonRoute);
+    public GpsPoint[] outlierDeletion(@RequestParam("route") String jsonRoute, @RequestParam("distThreshold")int distThreshold) throws IOException {
+        return outlierDeletionService.outlierDeletion(jsonRoute, distThreshold);
     }
 
     @RequestMapping("/smoothing")
@@ -52,8 +48,8 @@ public class RoutePreProcessingController {
     }
 
     @RequestMapping("/mapMatching")
-    public void mapMatchting(){
-        mapMatchingService.mapMatching();
+    public void mapMatchting(@RequestParam("gpxFileContent") String gpxFileContent){
+        mapMatchingService.mapMatching(gpxFileContent);
     }
 
 

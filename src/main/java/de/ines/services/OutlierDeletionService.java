@@ -12,14 +12,20 @@ import java.util.Arrays;
 @Service
 public class OutlierDeletionService {
 
-    public GpsPoint[] outlierDeletion(String jsonRoute) throws IOException {
+    /**
+     * Based on Simon Beckmann's outlier deletion - algorithm (bachelor thesis)
+     * @param jsonRoute the route to be cleaned up
+     * @param distThreshold distance threshold for outliers in meters
+     * @return the cleaned up route
+     * @throws IOException
+     */
+
+    public GpsPoint[] outlierDeletion(String jsonRoute,  int distThreshold) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         Route route = null;
         route = mapper.readValue(jsonRoute, Route.class);
         GpsPoint[] points = route.route;
         ArrayList<GpsPoint> resultingRoute = new ArrayList<>(Arrays.asList(points));
-
-        int distThreshold = 50;
 
         for(int i = 0; i < resultingRoute.size()-1; i++){
             int j = i+1;

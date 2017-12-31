@@ -12,7 +12,16 @@ import java.util.ArrayList;
 @Service
 public class StaypointDetectionService {
 
-    public GpsPoint[] staypointDetection(String jsonRoute) throws IOException {
+
+    /**
+     * Adapted and based on "https://gist.github.com/ckybonist/587b280b5abc8eb48a7c1a450b38ea23"
+     * @param jsonRoute the route which staypoints should be detected
+     * @param distThreshold distance threshold in meters
+     * @param timeThreshold time threshold in seconds
+     * @return the staypoint - cleansed route
+     * @throws IOException
+     */
+    public GpsPoint[] staypointDetection(String jsonRoute, int distThreshold, int timeThreshold) throws IOException {
 
         ArrayList<GpsPoint> staypoints = new ArrayList<GpsPoint>();
         ObjectMapper mapper = new ObjectMapper();
@@ -20,8 +29,6 @@ public class StaypointDetectionService {
         route = mapper.readValue(jsonRoute, Route.class);
         GpsPoint[] points = route.route;
 
-        int distThreshold = 50;
-        int timeThreshold = 1800;
 
         int i = 0;
         while(i <points.length) {

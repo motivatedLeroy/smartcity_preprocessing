@@ -11,7 +11,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableJpaRepositories(basePackages = { "de.ines.repositories" })
 @EnableRabbit
 public class SmartCityPreprocessing {
-
     public static void main(String[] args){
         SpringApplication.run(SmartCityPreprocessing.class);
     }

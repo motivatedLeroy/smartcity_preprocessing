@@ -18,27 +18,44 @@ import com.graphhopper.util.Parameters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 
 @Service
 public class MapMatchingService {
 
     public static GraphHopper hopper = new GraphHopperOSM();
+    public static CarFlagEncoder encoder;
 
+
+    /**
+     * Based on the map matching service on "https://github.com/graphhopper/map-matching"
+     * Reads in map data (currently only the map of Leipzig, Germany)
+     *  and enables the matching serivce to work in this area
+     */
     @Autowired
     public MapMatchingService(){
-        hopper.setDataReaderFile("./map-data/leipzig_germany.osm.pbf");
-    }
-
-
-    public void mapMatching(){
-
         // import OpenStreetMap data
+        hopper.setDataReaderFile("./map-data/leipzig_germany.osm.pbf");
         hopper.setGraphHopperLocation("./target/mapmatchingtest");
-        CarFlagEncoder encoder = new CarFlagEncoder();
+        encoder = new CarFlagEncoder();
         hopper.setEncodingManager(new EncodingManager(encoder));
         hopper.getCHFactoryDecorator().setEnabled(false);
         hopper.importOrLoad();
+
+    }
+
+    /**
+     * Based on the map matching service on "https://github.com/graphhopper/map-matching"
+     * @param gpxFileContent creates a file based on the gpxFileContent and hands it over to the map matching enginge
+     * @return  a list of GraphHopper edges with all associated GPX entries. The edges (or their IDs can be stored for later use
+     */
+
+    public List<EdgeMatch> mapMatching(String gpxFileContent){
+        // configure Map
+
 
         // create MapMatching object, can and should be shared accross threads
         String algorithm = Parameters.Algorithms.DIJKSTRA_BI;
@@ -47,16 +64,21 @@ public class MapMatchingService {
         MapMatching mapMatching = new MapMatching(hopper, algoOptions);
 
         // do the actual matching, get the GPX entries from a file or via stream
+        /*File file = new File("src/main/resources/test1.gpx");
+        try {
+            FileWriter fileWriter = new FileWriter(file, false);
+            fileWriter.write(gpxFileContent);
+            fileWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
+
         List<GPXEntry> inputGPXEntries = new GPXFile().doImport("src/main/resources/test1.gpx").getEntries();
         MatchResult mr = mapMatching.doWork(inputGPXEntries);
 
         // return GraphHopper edges with all associated GPX entries
-        List<EdgeMatch> matches = mr.getEdgeMatches();
-        // now do something with the edges like storing the edgeIds or doing fetchWayGeometry etc
-        for(int i =0; i < matches.size(); i++){
-            EdgeIteratorState edgeIteratorState = matches.get(i).getEdgeState();
-            System.out.println(edgeIteratorState.getAdjNode());
-        }
+        return mr.getEdgeMatches();
+
     }
 
 

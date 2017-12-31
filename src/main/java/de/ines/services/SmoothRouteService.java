@@ -12,6 +12,13 @@ import java.util.Arrays;
 @Service
 public class SmoothRouteService {
 
+    /**
+     * Based on Simon Beckmann's smoothing - algorithm (bachelor thesis)
+     * @param jsonRoute the route to be smoothed
+     * @return the smoothed route
+     * @throws IOException
+     */
+
     public GpsPoint[] smoothRoute(String jsonRoute) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         Route route = null;
