@@ -33,7 +33,11 @@ public class SmoothRouteService {
             point.setLongitude((float) ((point.getLongitude() * 0.6) + (predecessor.getLongitude() * 0.2)
                     + (successor.getLongitude() * 0.2)));
         }
-        return (GpsPoint[])resultingRoute.toArray();
+        GpsPoint[] result = new GpsPoint[resultingRoute.size()];
+        for(int i = 0; i < resultingRoute.size(); i++){
+            result[i] = resultingRoute.get(i);
+        }
+        return result;
     }
 
 }

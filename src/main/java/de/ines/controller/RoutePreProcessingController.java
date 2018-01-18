@@ -1,11 +1,10 @@
 package de.ines.controller;
 
 import de.ines.entities.GpsPoint;
+import de.ines.requestWrappers.OutlierDeletionWrapper;
 import de.ines.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
@@ -27,29 +26,34 @@ public class RoutePreProcessingController {
     @Autowired
     public MapMatchingService mapMatchingService;
 
-    @RequestMapping("/staypointDetection")
-    public GpsPoint[] staypointDetection(@RequestParam("route") String jsonRoute, @RequestParam("distThreshold") int distThreshold, @RequestParam("timeThreshold")int timeThreshold) throws IOException {
-        return staypointDetectionService.staypointDetection(jsonRoute, distThreshold, timeThreshold);
+    @RequestMapping(value = "/staypointDetection", method = RequestMethod.POST)
+    public GpsPoint[] staypointDetection(@RequestBody String staypointDetectionWrapper) throws IOException {
+        return staypointDetectionService.staypointDetection(staypointDetectionWrapper);
     }
 
-    @RequestMapping("/outlierDeletion")
-    public GpsPoint[] outlierDeletion(@RequestParam("route") String jsonRoute, @RequestParam("distThreshold")int distThreshold) throws IOException {
-        return outlierDeletionService.outlierDeletion(jsonRoute, distThreshold);
+    @RequestMapping(value = "/outlierDeletion", method = RequestMethod.POST)
+    public GpsPoint[] outlierDeletion(@RequestBody String outlierDeletionWrapper) throws IOException {
+        return outlierDeletionService.outlierDeletion(outlierDeletionWrapper);
     }
 
-    @RequestMapping("/smoothing")
-    public GpsPoint[] smoothing(@RequestParam("route") String jsonRoute) throws IOException {
+    @RequestMapping(value = "/smoothing", method = RequestMethod.POST)
+    public GpsPoint[] smoothing(@RequestBody String jsonRoute) throws IOException {
         return smoothRouteService.smoothRoute(jsonRoute);
     }
 
-    @RequestMapping("/compressRoute")
-    public GpsPoint[] compressRoute(@RequestParam("route") String jsonRoute, @RequestParam("tolerance")double tolerance, @RequestParam("highQuality") boolean highQuality) throws IOException {
-        return douglasPeuckerService.simplify(jsonRoute, tolerance, highQuality);
+    @RequestMapping(value = "/douglasPeucker", method = RequestMethod.POST)
+    public GpsPoint[] douglasPeucker(@RequestBody String douglasPeuckerWrapper) throws IOException {
+        return douglasPeuckerService.simplify(douglasPeuckerWrapper);
     }
 
     @RequestMapping("/mapMatching")
     public void mapMatchting(@RequestParam("gpxFileContent") String gpxFileContent){
         mapMatchingService.mapMatching(gpxFileContent);
+    }
+
+    @RequestMapping("/test")
+    public String test(){
+        return "hallo";
     }
 
 

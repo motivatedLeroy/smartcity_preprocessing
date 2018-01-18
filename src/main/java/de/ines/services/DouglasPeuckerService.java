@@ -3,6 +3,7 @@ package de.ines.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.ines.entities.GpsPoint;
 import de.ines.entities.Route;
+import de.ines.requestWrappers.DouglasPeuckerWrapper;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -18,26 +19,39 @@ public class DouglasPeuckerService {
 
     /**
      * Based on the simplify algorithm of "https://github.com/hgoebl/simplify-java"
-     * @param jsonRoute the route to be entered via json
-     * @param tolerance used to compute the squared tolerance that limitates the number of points in the simplified route
-     * @param highestQuality defines that either radial distance or Douglas - Peucker is used to determine the simplified route
+     * @param jsonWrapper  the Wrapper holding the tolerance value, the route and the boolean flag whether the Douglas Peucker or a
+     *                     simplified (less precise) version of the algorithm should be used.
+     *
+     * possible wrapper:
+     *                     {
+        "route":{
+        "id":560754436,
+        "route":[{"id":1,"latitude":0.6808774554612159,"longitude":0.7218983487386227,"date":-1670088896008342321,"heading":0.15907077599959962,"speed":0.6552999906327358,"acceleration":0.02741700074302611 }]
+        }
+        ,"tolerance":10
+        ,"highQuality":true
+    }
+     *
+     *
      * @return the simplified route
      * @throws IOException
      */
-    public GpsPoint[] simplify(String jsonRoute, double tolerance, boolean highestQuality) throws IOException {
+    public GpsPoint[] simplify(String jsonWrapper) throws IOException {
 
         ObjectMapper mapper = new ObjectMapper();
+        DouglasPeuckerWrapper wrapper = null;
+        wrapper = mapper.readValue(jsonWrapper, DouglasPeuckerWrapper.class);
         Route route = null;
-        route = mapper.readValue(jsonRoute, Route.class);
+        route = wrapper.route;
         GpsPoint[] points = route.route;
 
         if (points == null || points.length <= 2) {
             return points;
         }
 
-        double sqTolerance = tolerance * tolerance;
+        double sqTolerance = wrapper.tolerance * wrapper.tolerance;
 
-        if (!highestQuality) {
+        if (!wrapper.highQuality) {
             points = simplifyRadialDistance(points, sqTolerance);
         }
 
@@ -66,7 +80,11 @@ public class DouglasPeuckerService {
             newPoints.add(point);
         }
 
-        return newPoints.toArray(sampleArray);
+        GpsPoint[] result = new GpsPoint[newPoints.size()];
+        for(int i = 0; i < newPoints.size(); i++){
+            result[i] = newPoints.get(i);
+        }
+        return result;
     }
 
     private static class Range {
@@ -122,7 +140,11 @@ public class DouglasPeuckerService {
             newPoints.add(points[index]);
         }
 
-        return newPoints.toArray(sampleArray);
+        GpsPoint[] result = new GpsPoint[newPoints.size()];
+        for(int i = 0; i < newPoints.size(); i++){
+            result[i] = newPoints.get(i);
+        }
+        return result;
     }
 
 

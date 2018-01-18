@@ -38,7 +38,7 @@ public class MapMatchingService {
     @Autowired
     public MapMatchingService(){
         // import OpenStreetMap data
-        hopper.setDataReaderFile("./map-data/leipzig_germany.osm.pbf");
+        hopper.setDataReaderFile("./map-data/baden-wuerttemberg-latest.osm.pbf");
         hopper.setGraphHopperLocation("./target/mapmatchingtest");
         encoder = new CarFlagEncoder();
         hopper.setEncodingManager(new EncodingManager(encoder));
@@ -64,16 +64,16 @@ public class MapMatchingService {
         MapMatching mapMatching = new MapMatching(hopper, algoOptions);
 
         // do the actual matching, get the GPX entries from a file or via stream
-        /*File file = new File("src/main/resources/test1.gpx");
+        File file = new File("src/main/resources/route.gpx");
         try {
             FileWriter fileWriter = new FileWriter(file, false);
             fileWriter.write(gpxFileContent);
             fileWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
-        }*/
+        }
 
-        List<GPXEntry> inputGPXEntries = new GPXFile().doImport("src/main/resources/test1.gpx").getEntries();
+        List<GPXEntry> inputGPXEntries = new GPXFile().doImport("src/main/resources/route.gpx").getEntries();
         MatchResult mr = mapMatching.doWork(inputGPXEntries);
 
         // return GraphHopper edges with all associated GPX entries
